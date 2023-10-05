@@ -61,6 +61,11 @@ class HomeController extends GetxController {
     return properties.snapshots();
   }
 
+  Stream<QuerySnapshot<Object?>> streamCategory() {
+    CollectionReference streamCategory = firestore.collection("categories");
+    return streamCategory.snapshots();
+  }
+
   @override
   Future<void> onInit() async {
     super.onInit();

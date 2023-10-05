@@ -19,7 +19,6 @@ class HomeView extends GetView<HomeController> {
         child: Scrollbar(
           child: SingleChildScrollView(
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   color: Colors.black,
@@ -136,120 +135,52 @@ class HomeView extends GetView<HomeController> {
                         Container(
                           width: MediaQuery.of(context).size.width,
                           height: 50,
-                          child: ListView(
-                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              Container(
-                                decoration: const BoxDecoration(
-                                    color: Color.fromRGBO(22, 28, 44, 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50))),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(7),
-                                  child: Row(children: [
-                                    ClipOval(
-                                      child: Image.asset(
-                                        'assets/property/house1.jpg',
-                                        fit: BoxFit.cover,
-                                        width: 35,
-                                        height: 35,
+                          child: StreamBuilder<QuerySnapshot<Object?>>(
+                            stream: controller.streamCategory(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.active) {
+                                var listCategories = snapshot.data!.docs;
+                                return ListView.builder(
+                                  itemCount: listCategories.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) => Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                          color: Color.fromRGBO(22, 28, 44, 1),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(50))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(7),
+                                        child: Row(children: [
+                                          ClipOval(
+                                            child: Image.asset(
+                                              'assets/property/${(index % 2) == 0 ? 'house1.jpg' : 'house3.jpg'}',
+                                              fit: BoxFit.cover,
+                                              width: 35,
+                                              height: 35,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 0, 10, 0),
+                                            child: Text(
+                                              '${(listCategories[index].data() as Map<String, dynamic>)["title"]}',
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          )
+                                        ]),
                                       ),
                                     ),
-                                    const Padding(
-                                      padding: EdgeInsets.fromLTRB(8, 0, 10, 0),
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                decoration: const BoxDecoration(
-                                    color: Color.fromRGBO(22, 28, 44, 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50))),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(7),
-                                  child: Row(children: [
-                                    ClipOval(
-                                      child: Image.asset(
-                                        'assets/property/house2.jpg',
-                                        fit: BoxFit.cover,
-                                        width: 35,
-                                        height: 35,
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.fromLTRB(8, 0, 10, 0),
-                                      child: Text(
-                                        'House',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Color.fromRGBO(22, 28, 44, 1),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(50),
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(7),
-                                  child: Row(children: [
-                                    ClipOval(
-                                      child: Image.asset(
-                                        'assets/property/house3.jpg',
-                                        fit: BoxFit.cover,
-                                        width: 35,
-                                        height: 35,
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.fromLTRB(8, 0, 10, 0),
-                                      child: Text(
-                                        'Apartment',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                decoration: const BoxDecoration(
-                                    color: Color.fromRGBO(22, 28, 44, 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50))),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(7),
-                                  child: Row(children: [
-                                    ClipOval(
-                                      child: Image.asset(
-                                        'assets/property/house2.jpg',
-                                        fit: BoxFit.cover,
-                                        width: 35,
-                                        height: 35,
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.fromLTRB(8, 0, 10, 0),
-                                      child: Text(
-                                        'Office',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                              ),
-                            ],
+                                );
+                              }
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            },
                           ),
                         ),
                         // End of Menu All | House | Appartment
