@@ -91,6 +91,20 @@ class AddPropertyView extends GetView<AddPropertyController> {
                           ),
                         ),
                       ),
+                      TextField(
+                        controller: controller.propertyPrice,
+                        style: TextStyle(color: Colors.black),
+                        decoration: const InputDecoration(
+                          labelText: "Price",
+                          labelStyle: TextStyle(color: Colors.green),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                        ),
+                      ),
                     ]),
                   ),
                 ),
@@ -108,9 +122,11 @@ class AddPropertyView extends GetView<AddPropertyController> {
             child: FloatingActionButton.extended(
               onPressed: () {
                 controller.addProperty(
-                    controller.propertyTitle.text,
-                    controller.propertyLocation.text,
-                    controller.propertySurface.text);
+                  controller.propertyTitle.text,
+                  controller.propertyLocation.text,
+                  controller.propertySurface.text,
+                  controller.propertyPrice.text,
+                );
               },
               label: const Text(
                 'Save',

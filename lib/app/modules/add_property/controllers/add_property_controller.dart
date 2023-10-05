@@ -8,15 +8,18 @@ class AddPropertyController extends GetxController {
   late TextEditingController propertyTitle;
   late TextEditingController propertyLocation;
   late TextEditingController propertySurface;
+  late TextEditingController propertyPrice;
 
   // add property to firebase
-  void addProperty(String title, String location, String surface) async {
+  void addProperty(
+      String title, String location, String surface, String price) async {
     CollectionReference property = firestore.collection("properties");
     try {
       await property.add({
         "title": title,
         "location": location,
         "surface": surface,
+        "price": price,
       });
 
       Get.defaultDialog(
@@ -39,6 +42,7 @@ class AddPropertyController extends GetxController {
     propertyTitle = TextEditingController();
     propertyLocation = TextEditingController();
     propertySurface = TextEditingController();
+    propertyPrice = TextEditingController();
     super.onInit();
   }
 
@@ -47,6 +51,7 @@ class AddPropertyController extends GetxController {
     propertyTitle.dispose();
     propertyLocation.dispose();
     propertySurface.dispose();
+    propertyPrice.dispose();
     super.onClose();
   }
 }

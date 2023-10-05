@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -266,7 +267,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                     child: Column(
                       children: [
                         const Row(
@@ -280,211 +281,265 @@ class HomeView extends GetView<HomeController> {
                             Text('View all'),
                           ],
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         // Property Slider
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
                           height: 410,
-                          child: ListView.builder(
-                            itemCount: 2,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) => Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                              child:
-                                  // item property slider
-                                  Container(
-                                width: 300,
-                                height: 400,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
-                                  image: DecorationImage(
-                                    alignment: Alignment.center,
-                                    matchTextDirection: true,
-                                    fit: BoxFit.cover,
-                                    image: AssetImage(
-                                        "assets/property/house3.jpg"),
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(20),
-                                        child: Row(
+                          child: StreamBuilder<QuerySnapshot<Object?>>(
+                            stream: controller.streamProperty(),
+                            // future: controller.getProperty(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.active) {
+                                var listProperty = snapshot.data!.docs;
+                                return ListView.builder(
+                                  itemCount: listProperty.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) => Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    child:
+                                        // item property slider
+                                        Container(
+                                      width: 300,
+                                      height: 400,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(30)),
+                                        image: DecorationImage(
+                                          alignment: Alignment.center,
+                                          matchTextDirection: true,
+                                          fit: BoxFit.cover,
+                                          image: AssetImage(
+                                              "assets/property/${(index % 2) == 0 ? 'house1.jpg' : 'house3.jpg'}"),
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(30)),
+                                        child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            CircleAvatar(
-                                              backgroundColor: Colors.white,
-                                              radius: 15,
-                                              child: IconButton(
+                                            Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    radius: 15,
+                                                    child: IconButton(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0),
+                                                      icon: const Icon(Icons
+                                                          .favorite_border_outlined),
+                                                      color: Colors.black,
+                                                      onPressed: () {},
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: const BoxDecoration(
+                                                gradient: LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    colors: [
+                                                      Colors.black12,
+                                                      Colors.black87,
+                                                    ]),
+                                              ),
+                                              child: Padding(
                                                 padding:
-                                                    const EdgeInsets.all(0),
-                                                icon: const Icon(Icons
-                                                    .favorite_border_outlined),
-                                                color: Colors.black,
-                                                onPressed: () {},
+                                                    const EdgeInsets.fromLTRB(
+                                                        20, 10, 20, 20),
+                                                child: Column(
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        '\$${(listProperty[index].data() as Map<String, dynamic>)["price"]}k \n${(listProperty[index].data() as Map<String, dynamic>)["title"]}, ${(listProperty[index].data() as Map<String, dynamic>)["location"]}',
+                                                        style: const TextStyle(
+                                                            fontSize: 15,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              CircleAvatar(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                radius: 13,
+                                                                child:
+                                                                    IconButton(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          0),
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .car_repair_outlined),
+                                                                  color: Colors
+                                                                      .black,
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                              const Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .fromLTRB(
+                                                                            5,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                child: Text(
+                                                                  '4 Bds',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        Container(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              CircleAvatar(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                radius: 13,
+                                                                child:
+                                                                    IconButton(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          0),
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .bathroom_outlined),
+                                                                  color: Colors
+                                                                      .black,
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                              const Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .fromLTRB(
+                                                                            5,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                                child: Text(
+                                                                  'Bath',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        Container(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              CircleAvatar(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                radius: 13,
+                                                                child:
+                                                                    IconButton(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          0),
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .ac_unit),
+                                                                  color: Colors
+                                                                      .black,
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        5,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                child: Text(
+                                                                  '${(listProperty[index].data() as Map<String, dynamic>)["surface"]} ft2',
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: [
-                                                Colors.black12,
-                                                Colors.black87,
-                                              ]),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              20, 10, 20, 20),
-                                          child: Column(
-                                            children: [
-                                              const Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  '\$28.6k \n56 Green Bank, London',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        CircleAvatar(
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          radius: 13,
-                                                          child: IconButton(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(0),
-                                                            icon: const Icon(Icons
-                                                                .car_repair_outlined),
-                                                            color: Colors.black,
-                                                            onPressed: () {},
-                                                          ),
-                                                        ),
-                                                        const Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                                  5, 0, 0, 0),
-                                                          child: Text(
-                                                            '4 Bds',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Container(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        CircleAvatar(
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          radius: 13,
-                                                          child: IconButton(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(0),
-                                                            icon: const Icon(Icons
-                                                                .bathroom_outlined),
-                                                            color: Colors.black,
-                                                            onPressed: () {},
-                                                          ),
-                                                        ),
-                                                        const Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                                  5, 0, 0, 0),
-                                                          child: Text(
-                                                            'Bath',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Container(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        CircleAvatar(
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          radius: 13,
-                                                          child: IconButton(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(0),
-                                                            icon: const Icon(
-                                                                Icons.ac_unit),
-                                                            color: Colors.black,
-                                                            onPressed: () {},
-                                                          ),
-                                                        ),
-                                                        const Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                                  5, 0, 0, 0),
-                                                          child: Text(
-                                                            '1,042 ft2',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            // End of item property slider
+                                  // End of item property slider
+                                );
+                              }
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            },
                           ),
                         )
                         // End of Property Slider

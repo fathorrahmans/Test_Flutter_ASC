@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 
 class HomeController extends GetxController {
   final authC = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final emailC = TextEditingController();
   final passC = TextEditingController();
@@ -52,6 +54,11 @@ class HomeController extends GetxController {
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemark[0];
     strAlamat('${place.country}, ${place.subLocality}');
+  }
+
+  Stream<QuerySnapshot<Object?>> streamProperty() {
+    CollectionReference properties = firestore.collection("properties");
+    return properties.snapshots();
   }
 
   @override
